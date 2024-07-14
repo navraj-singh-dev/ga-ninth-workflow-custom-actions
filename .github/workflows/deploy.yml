@@ -10,9 +10,12 @@ jobs:
       - name: Get code
         uses: actions/checkout@v4
       - name: custom action to install and cache deps
+        id: custom-action
         uses: ./.github/actions/install-cache-deps
         with:
-          perform-cache: 'false'
+          perform-cache: "false"
+      - name: Custom action output
+        run: echo "is-perform-cache-on - ${{ steps.custom-action.outputs.is-perform-cache-on }}"
       - name: Lint code
         run: npm run lint
   test:

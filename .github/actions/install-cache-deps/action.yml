@@ -8,6 +8,11 @@ inputs:
     required: false
     default: "true"
 
+outputs:
+  is-perform-cache-on:
+    description: "Tells whether user wants to cache the deps or not"
+    value: ${{ steps.action-output.outputs.is-perform-cache-on }}
+
 runs:
   using: composite
   steps:
@@ -19,6 +24,9 @@ runs:
         path: node_modules
         key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
     - name: Install dependencies
+      id: action-output
       if: steps.cache.outputs.cache-hit != 'true' || inputs.perform-cache != 'true'
-      run: npm ci
+      run: |
+        npm ci
+        echo "is-perform-cache-on='${{ inputs.perform-cache }}'" >> $GITHUB_OUTPUT
       shell: bash
