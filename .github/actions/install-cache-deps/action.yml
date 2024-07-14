@@ -2,16 +2,23 @@ name: "install-cache-dependencies"
 
 description: "It install depedencies (via npm) and caches them"
 
+inputs:
+  perform-cache:
+    description: "Whether to cache or not cache the dependencies"
+    required: false
+    default: "true"
+
 runs:
   using: composite
   steps:
     - name: Cache dependencies
       id: cache
+      if: inputs.perform-cache == 'true'
       uses: actions/cache@v4
       with:
         path: node_modules
         key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
     - name: Install dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true' || inputs.perform-cache != 'true'
       run: npm ci
       shell: bash
